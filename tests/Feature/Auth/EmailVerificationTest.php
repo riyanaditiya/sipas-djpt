@@ -27,7 +27,7 @@ test('email can be verified', function () {
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
     
     // PERBAIKAN: Paksa redirect ke URL root dengan query string verified
-    $response->assertRedirect(url('/') . '?verified=1');
+    $response->assertRedirect(route('dashboard').'?verified=1');
 });
 
 test('email is not verified with invalid hash', function () {
