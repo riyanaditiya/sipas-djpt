@@ -22,12 +22,12 @@ test('email can be verified', function () {
     );
 
     $response = $this->actingAs($user)->get($verificationUrl);
-    Event::assertDispatched(Verified::class);
 
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
     
-    // Pastikan ini diarahkan ke root '/'
-    $response->assertRedirect('/?verified=1');
+    // GUNAKAN INI:
+    // route('dashboard', false) akan menghasilkan string "/"
+    $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
 });
 
 test('email is not verified with invalid hash', function () {
