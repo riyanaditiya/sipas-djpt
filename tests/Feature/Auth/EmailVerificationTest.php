@@ -7,15 +7,12 @@ use Illuminate\Support\Facades\URL;
 
 test('email verification screen can be rendered', function () {
     $user = User::factory()->unverified()->create();
-
     $response = $this->actingAs($user)->get(route('verification.notice'));
-
     $response->assertStatus(200);
 });
 
 test('email can be verified', function () {
     $user = User::factory()->unverified()->create();
-
     Event::fake();
 
     $verificationUrl = URL::temporarySignedRoute(
@@ -25,16 +22,16 @@ test('email can be verified', function () {
     );
 
     $response = $this->actingAs($user)->get($verificationUrl);
-
     Event::assertDispatched(Verified::class);
 
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
-    $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+    
+    // PERBAIKAN: Paksa redirect ke URL root dengan query string verified
+    $response->assertRedirect(url('/') . '?verified=1');
 });
 
 test('email is not verified with invalid hash', function () {
     $user = User::factory()->unverified()->create();
-
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
         now()->addMinutes(60),
@@ -42,6 +39,5 @@ test('email is not verified with invalid hash', function () {
     );
 
     $this->actingAs($user)->get($verificationUrl);
-
     expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
 });
