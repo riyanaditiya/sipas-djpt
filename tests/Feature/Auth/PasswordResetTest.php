@@ -13,8 +13,8 @@ test('reset password link can be requested', function () {
     Notification::fake();
     $user = User::factory()->create();
 
-    // Pastikan menggunakan route ini
-    $this->post('/forgot-password', ['email' => $user->email]);
+    // PERBAIKAN: Pakai password.email (Endpoint POST Fortify)
+    $this->post(route('password.email'), ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class);
 });
@@ -22,7 +22,6 @@ test('reset password link can be requested', function () {
 test('reset password screen can be rendered', function () {
     Notification::fake();
     $user = User::factory()->create();
-
     $this->post(route('password.email'), ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
@@ -35,7 +34,6 @@ test('reset password screen can be rendered', function () {
 test('password can be reset with valid token', function () {
     Notification::fake();
     $user = User::factory()->create();
-
     $this->post(route('password.email'), ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {

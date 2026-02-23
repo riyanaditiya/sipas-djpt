@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->redirectTo(
+            guests: '/login',
+            users: '/' // Paksa Laravel menganggap HOME adalah root '/'
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
