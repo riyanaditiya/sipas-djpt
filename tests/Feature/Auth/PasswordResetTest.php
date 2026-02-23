@@ -13,8 +13,8 @@ test('reset password link can be requested', function () {
     Notification::fake();
     $user = User::factory()->create();
 
-    // PERBAIKAN: Pakai password.email (Endpoint POST Fortify)
-    $this->post(route('password.email'), ['email' => $user->email]);
+    // Coba gunakan URL manual jika route name bermasalah
+    $this->post('/forgot-password', ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class);
 });
