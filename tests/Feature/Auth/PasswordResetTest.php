@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Support\Facades\Notification;
 
 test('reset password link screen can be rendered', function () {
@@ -9,14 +10,15 @@ test('reset password link screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
+// Di dalam file PasswordResetTest.php
 test('reset password link can be requested', function () {
     Notification::fake();
     $user = User::factory()->create();
 
-    // Gunakan URL langsung untuk memastikan tidak ada salah route
     $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class);
+    // Cek class custom milikmu, bukan class bawaan Laravel
+    Notification::assertSentTo($user, ResetPasswordNotification::class);
 });
 
 test('reset password screen can be rendered', function () {
