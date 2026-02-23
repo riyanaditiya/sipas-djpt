@@ -24,9 +24,11 @@ test('reset password link can be requested', function () {
 test('reset password screen can be rendered', function () {
     Notification::fake();
     $user = User::factory()->create();
-    $this->post(route('password.email'), ['email' => $user->email]);
+    
+    $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
+    // PERBAIKAN: Ganti ResetPassword::class jadi ResetPasswordNotification::class
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function ($notification) {
         $response = $this->get(route('password.reset', ['token' => $notification->token]));
         $response->assertStatus(200);
         return true;
@@ -36,9 +38,11 @@ test('reset password screen can be rendered', function () {
 test('password can be reset with valid token', function () {
     Notification::fake();
     $user = User::factory()->create();
-    $this->post(route('password.email'), ['email' => $user->email]);
+    
+    $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+    // PERBAIKAN: Ganti ResetPassword::class jadi ResetPasswordNotification::class
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function ($notification) use ($user) {
         $response = $this->post(route('password.update'), [
             'token' => $notification->token,
             'email' => $user->email,
@@ -48,7 +52,6 @@ test('password can be reset with valid token', function () {
 
         $response->assertSessionHasNoErrors();
         $response->assertRedirect(route('login'));
-
         return true;
     });
 });
