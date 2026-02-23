@@ -13,7 +13,7 @@ test('reset password link can be requested', function () {
     Notification::fake();
     $user = User::factory()->create();
 
-    // Coba gunakan URL manual jika route name bermasalah
+    // Gunakan URL langsung untuk memastikan tidak ada salah route
     $this->post('/forgot-password', ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class);
