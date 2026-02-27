@@ -1,35 +1,8 @@
 {{-- Wrapper Utama dengan overflow-hidden untuk mematikan scroll horizontal global --}}
 <div class="relative flex-1 min-w-0 overflow-x-hidden">
 
-    {{-- Flash Message / Toast Notification --}}
-    @if (session()->has('success'))
-        <div x-data="{ show: true }" x-show="show" x-transition.opacity.duration.500ms x-init="setTimeout(() => show = false, 3000)"
-            class="fixed top-5 right-5 flex items-center gap-3
-           bg-green-500 text-white px-5 py-3
-           rounded-lg shadow-lg z-[9999]">
-            <div class="flex h-9 w-9 items-center justify-center rounded-full bg-white/20">
-                <svg class="w-5 h-5 animate-[pop_0.4s_ease-out]" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                </svg>
-            </div>
-            <span class="text-sm font-semibold tracking-wide">{{ session('success') }}</span>
-        </div>
+    @include('partials.alert')
 
-        <style>
-            @keyframes pop {
-                0% {
-                    transform: scale(0.6);
-                    opacity: 0;
-                }
-
-                100% {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-            }
-        </style>
-    @endif
 
     <div class="w-full">
         {{-- Header --}}
@@ -249,16 +222,15 @@
 
     {{-- Modal Delete --}}
     @if ($deleteUuid)
-        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000] p-4">
-            <div
-                class="bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md p-6 border border-zinc-200 dark:border-zinc-800">
-                <h2 class="text-lg font-bold text-gray-800 dark:text-white">Konfirmasi Hapus</h2>
-                <p class="mt-2 text-gray-600 dark:text-zinc-400">Apakah Anda yakin ingin menghapus data ini?</p>
-                <div class="mt-6 flex justify-end gap-3">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-lg w-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-800">Konfirmasi Hapus</h2>
+                <p class="mt-2 text-gray-600">Apakah Anda yakin ingin menghapus data ini?</p>
+                <div class="mt-4 flex justify-end gap-3">
                     <button wire:click="$set('deleteUuid', null)"
-                        class="px-4 py-2 text-sm font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Batal</button>
+                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
                     <button wire:click="delete"
-                        class="px-4 py-2 text-sm font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all shadow-md active:scale-95">Hapus</button>
+                        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Hapus</button>
                 </div>
             </div>
         </div>

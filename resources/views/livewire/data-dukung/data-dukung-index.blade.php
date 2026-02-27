@@ -1,37 +1,5 @@
 <div>
-    {{-- Notifikasi Sukses --}}
-    @if (session()->has('success'))
-        <div x-data="{ show: true }" x-show="show" x-transition.opacity.duration.500ms x-init="setTimeout(() => show = false, 3000)"
-            class="fixed top-5 right-5 flex items-center gap-3
-           bg-green-500 text-white px-5 py-3
-           rounded-lg shadow-lg z-[9999]">
-            <div class="flex h-9 w-9 items-center justify-center
-                rounded-full bg-white/20">
-                <svg class="w-5 h-5 animate-[pop_0.4s_ease-out]" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                </svg>
-            </div>
-
-            <span class="text-sm font-semibold tracking-wide">
-                {{ session('success') }}
-            </span>
-        </div>
-
-        <style>
-            @keyframes pop {
-                0% {
-                    transform: scale(0.6);
-                    opacity: 0;
-                }
-
-                100% {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-            }
-        </style>
-    @endif
+    @include('partials.alert')
 
     <div class="relative w-full">
         {{-- Header --}}
@@ -64,48 +32,62 @@
 
         <div class="mt-5">
             {{-- Toolbar: Pencarian & Filter --}}
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    {{-- Input Pencarian --}}
-                    <div class="relative w-full sm:w-80 group">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+            {{-- Toolbar: Pencarian & Filter --}}
+            <div class="mb-6">
+                {{-- Container Utama: Berubah jadi Column di mobile, Row di Desktop --}}
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+
+                    {{-- Grup Input & Select: Grid yang menyesuaikan layar --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-3 flex-grow">
+
+                        {{-- Input Pencarian --}}
+                        <div class="relative sm:col-span-2 lg:col-span-6 group">
+                            <div
+                                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <input wire:model.live.debounce.300ms="search" type="text"
+                                class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-sm rounded-lg focus:ring-[#00A2E9] focus:border-[#00A2E9] block w-full pl-10 p-2.5 outline-none shadow-sm"
+                                placeholder="Cari produk hukum...">
                         </div>
-                        <input wire:model.live.debounce.300ms="search" type="text"
-                            class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-sm rounded-lg focus:ring-[#00A2E9] focus:border-[#00A2E9] block w-full pl-10 p-2.5 outline-none shadow-sm"
-                            placeholder="Cari produk hukum...">
+
+                        {{-- Filter Kategori --}}
+                        <div class="sm:col-span-1 lg:col-span-3">
+                            <select wire:model.live="selectedCategory"
+                                class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-sm rounded-lg block w-full p-2.5 outline-none shadow-sm text-zinc-700 dark:text-zinc-300">
+                                <option value="">Semua Kategori</option>
+                                @foreach ($categories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Filter Status --}}
+                        <div class="sm:col-span-1 lg:col-span-3">
+                            <select wire:model.live="filterStatus"
+                                class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-sm rounded-lg block w-full p-2.5 outline-none shadow-sm text-zinc-700 dark:text-zinc-300">
+                                <option value="">Status</option>
+                                <option value="Selesai">Selesai</option>
+                                <option value="Belum Selesai">Belum Selesai</option>
+                            </select>
+                        </div>
                     </div>
 
-                    {{-- Filter Kategori --}}
-                    <select wire:model.live="selectedCategory"
-                        class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-sm rounded-lg block w-full sm:w-48 p-2.5 outline-none shadow-sm text-zinc-700 dark:text-zinc-300">
-                        <option value="">Semua Kategori</option>
-                        @foreach ($categories as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
+                    {{-- Tombol Tambah --}}
+                    <div class="w-full xl:w-auto">
+                        <a wire:navigate href="{{ route('data-dukung.create') }}"
+                            class="flex items-center justify-center gap-2 text-white bg-[#0576a6] hover:bg-[#0054A3] font-bold rounded-lg text-sm px-6 py-2.5 w-full xl:w-auto shadow-sm active:scale-95 transition-all">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span class="whitespace-nowrap">Tambah Data</span>
+                        </a>
+                    </div>
 
-                    {{-- Filter Status --}}
-                    <select wire:model.live="filterStatus"
-                        class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-sm rounded-lg block w-full sm:w-40 p-2.5 outline-none shadow-sm text-zinc-700 dark:text-zinc-300">
-                        <option value="">Status</option>
-                        <option value="Selesai">Selesai</option>
-                        <option value="Belum Selesai">Belum Selesai</option>
-                    </select>
-                </div>
-
-                {{-- Tombol Tambah --}}
-                <div class="w-full sm:w-auto">
-                    <a wire:navigate href="{{ route('data-dukung.create') }}"
-                        class="flex items-center justify-center gap-2 text-white bg-[#0576a6] hover:bg-[#0054A3] font-bold rounded-lg text-sm px-5 py-2.5 w-full shadow-sm active:scale-95 transition-transform">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Tambah Data
-                    </a>
                 </div>
             </div>
 
